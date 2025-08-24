@@ -1,4 +1,16 @@
 import { z } from "zod";
+import { GoogleGenAI } from "@google/genai";
+
+const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+
+const AnalyzerSchema = z.object({
+	profile: z.object({
+		name: z.string(),
+		description: z.string(),
+	}),
+	prompt: z.string(),
+	note: z.string(),
+});
 
 const GENERAL_SYSTEM_PROMPT = `
 You are a helpful notes assistant that will enhance, summarize, or process notes to make it more meanginful, organized, and useful.
@@ -13,3 +25,24 @@ Note Enhancement Process:
 - Perform the task specified in the prompt
 
 `;
+
+const gemini = new GoogleGenAI({
+	apiKey: GEMINI_API_KEY,
+});
+
+async function analyzeNote(data: z.infer<typeof AnalyzerSchema>) {
+	// Validate data structure
+	try {
+		AnalyzerSchema.parse(data);
+	} catch (error) {
+		console.error("Invalid data structure:", error);
+		return null;
+	}
+
+	const { profile, prompt, note } = data;
+
+	const response = await gemini.models.generateContent({
+		model: "gemini-2.5-flash-lite",
+		contents: "",
+	});
+}

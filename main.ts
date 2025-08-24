@@ -13,6 +13,7 @@ import {
 interface LynxPluginSettings {
 	mySetting: string;
 	profiles: LynxProfile[];
+	geminiApiKey: string;
 }
 
 interface LynxProfile {
@@ -25,6 +26,7 @@ interface LynxProfile {
 const DEFAULT_SETTINGS: LynxPluginSettings = {
 	mySetting: "default",
 	profiles: [],
+	geminiApiKey: "",
 };
 
 export default class LynxPlugin extends Plugin {
@@ -248,14 +250,14 @@ class LynxSettingTab extends PluginSettingTab {
 		containerEl.empty();
 
 		new Setting(containerEl)
-			.setName("Setting #1")
-			.setDesc("It's a secret")
+			.setName("Gemini API Key")
+			.setDesc("Enter your Google Gemini API key")
 			.addText((text) =>
 				text
-					.setPlaceholder("Enter your secret")
-					.setValue(this.plugin.settings.mySetting)
+					.setPlaceholder("Enter your Gemini API key")
+					.setValue(this.plugin.settings.geminiApiKey)
 					.onChange(async (value) => {
-						this.plugin.settings.mySetting = value;
+						this.plugin.settings.geminiApiKey = value;
 						await this.plugin.saveSettings();
 					})
 			);
