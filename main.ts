@@ -104,10 +104,33 @@ export default class LynxPlugin extends Plugin {
 						contents: fullPrompt,
 					});
 
+					const endOfSelection = editor.getCursor("to");
+
+					editor.replaceRange("\n\n", endOfSelection);
+
+					let insertPosition = {
+						line: endOfSelection.line + 2,
+						ch: 0,
+					};
+
 					for await (const chunk of response) {
 						const chunkText = chunk.text || "";
-						editor.replaceRange(chunkText, editor.getCursor());
-						editor.setCursor(editor.lastLine());
+						editor.replaceRange(chunkText, insertPosition);
+
+						const lines = chunkText.split("\n");
+						if (lines.length > 1) {
+							// Multi-line chunk
+							insertPosition = {
+								line: insertPosition.line + lines.length - 1,
+								ch: lines[lines.length - 1].length,
+							};
+						} else {
+							// Single line chunk
+							insertPosition = {
+								line: insertPosition.line,
+								ch: insertPosition.ch + chunkText.length,
+							};
+						}
 					}
 				} catch (error) {
 					console.error("AI generation failed:", error);
