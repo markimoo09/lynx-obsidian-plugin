@@ -188,6 +188,7 @@ export default class LynxPlugin extends Plugin {
 
 		this.profiles.push(profile);
 		this.settings.profiles = this.profiles;
+		new Notice("Profile created successfully!");
 		await this.saveSettings();
 
 		console.log("profile created", profile);
