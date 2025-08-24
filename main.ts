@@ -56,24 +56,6 @@ export default class LynxPlugin extends Plugin {
 			},
 		});
 
-		// This adds a simple command that can be triggered anywhere
-		this.addCommand({
-			id: "open-sample-modal-simple",
-			name: "Open sample modal (simple)",
-			callback: () => {
-				new SampleModal(this.app).open();
-			},
-		});
-		// This adds an editor command that can perform some operation on the current editor instance
-		this.addCommand({
-			id: "sample-editor-command",
-			name: "Sample editor command",
-			editorCallback: (editor: Editor, view: MarkdownView) => {
-				console.log(editor.getSelection());
-				editor.replaceSelection("Sample Editor Command");
-			},
-		});
-
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: "open-sample-modal-complex",
@@ -97,12 +79,6 @@ export default class LynxPlugin extends Plugin {
 
 		// This adds a settings tab so the user can configure various aspects of the plugin
 		this.addSettingTab(new LynxSettingTab(this.app, this));
-
-		// If the plugin hooks up any global DOM events (on parts of the app that doesn't belong to this plugin)
-		// Using this function will automatically remove the event listener when this plugin is disabled.
-		this.registerDomEvent(document, "click", (evt: MouseEvent) => {
-			console.log("click", evt);
-		});
 
 		// When registering intervals, this function will automatically clear the interval when the plugin is disabled.
 		this.registerInterval(
@@ -194,7 +170,7 @@ class ProfileCreationModal extends Modal {
 
 		const { contentEl } = this;
 		contentEl.createEl("p", {
-			text: "Profiles should be distinct for each note file and will help the AI understand the context of the note.",
+			text: "Profiles should be distinct for each note file, thus you cannot select the same file twice in the options. The profile will be used to summarize, enhance, or process the notes.",
 		});
 
 		const profileCreationDiv = contentEl.createEl("div", {
@@ -248,6 +224,16 @@ class ProfileCreationModal extends Modal {
 		});
 
 		createProfileButton.addEventListener("click", () => {
+			if (
+				!this.profileName ||
+				!this.profileDescription ||
+				!this.profilePrompt ||
+				!this.fileName
+			) {
+				new Notice("Please fill in all fields");
+				return;
+			}
+
 			this.close();
 			this.onSubmit(
 				this.profileName,
