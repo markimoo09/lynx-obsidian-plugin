@@ -1,7 +1,6 @@
 import { z } from "zod";
 import { GoogleGenAI } from "@google/genai";
-
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+import { Notice } from "obsidian";
 
 const AnalyzerSchema = z.object({
 	profile: z.object({
@@ -26,11 +25,10 @@ Note Enhancement Process:
 
 `;
 
-const gemini = new GoogleGenAI({
-	apiKey: GEMINI_API_KEY,
-});
-
-async function analyzeNote(data: z.infer<typeof AnalyzerSchema>) {
+export async function analyzeNote(
+	data: z.infer<typeof AnalyzerSchema>,
+	apiKey: string
+) {
 	// Validate data structure
 	try {
 		AnalyzerSchema.parse(data);
@@ -38,6 +36,17 @@ async function analyzeNote(data: z.infer<typeof AnalyzerSchema>) {
 		console.error("Invalid data structure:", error);
 		return null;
 	}
+
+	if (!apiKey) {
+		new Notice(
+			"No API key provided. Please set your API key in the plugin settings."
+		);
+		return null;
+	}
+
+	const gemini = new GoogleGenAI({
+		apiKey: apiKey,
+	});
 
 	const { profile, prompt, note } = data;
 

@@ -10,6 +10,8 @@ import {
 	TFile,
 } from "obsidian";
 
+import { analyzeNote } from "./analyzer";
+
 interface LynxPluginSettings {
 	mySetting: string;
 	profiles: LynxProfile[];
@@ -61,7 +63,7 @@ export default class LynxPlugin extends Plugin {
 		this.addCommand({
 			id: "enhance-note",
 			name: "Enhance Note",
-			editorCallback: (editor: Editor, view: MarkdownView) => {
+			editorCallback: async (editor: Editor, view: MarkdownView) => {
 				const selectedText = editor.getSelection();
 				if (!selectedText.trim())
 					return new Notice("Select a Text Section First!");
@@ -75,7 +77,17 @@ export default class LynxPlugin extends Plugin {
 
 				const prompt = profile.prompt;
 
-				// Call the AI Model
+				const result = await analyzeNote(
+					{
+						profile: {
+							name: profile.name,
+							description: profile.description,
+						},
+						prompt: profile.prompt,
+						note: selectedText,
+					},
+					this.settings.geminiApiKey
+				);
 			},
 		});
 
