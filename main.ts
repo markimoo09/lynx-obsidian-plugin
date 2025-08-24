@@ -63,8 +63,13 @@ export default class LynxPlugin extends Plugin {
 				new ProfileCreationModal(
 					this.app,
 					this,
-					(profile, description, prompt) => {
-						this.createProfile(profile, description, prompt);
+					(profile, description, prompt, fileName) => {
+						this.createProfile(
+							profile,
+							description,
+							prompt,
+							fileName
+						);
 					}
 				).open();
 			},
@@ -171,13 +176,14 @@ export default class LynxPlugin extends Plugin {
 	async createProfile(
 		profileName: string,
 		profileDescription: string,
-		profilePrompt: string
+		profilePrompt: string,
+		fileName: string
 	) {
 		const profile: LynxProfile = {
 			name: profileName,
 			description: profileDescription,
 			prompt: profilePrompt,
-			fileName: this.app.workspace.getActiveFile()?.path || "",
+			fileName: fileName,
 		};
 
 		this.profiles.push(profile);
@@ -190,12 +196,22 @@ export default class LynxPlugin extends Plugin {
 
 class ProfileCreationModal extends Modal {
 	plugin: LynxPlugin;
-	onSubmit: (profile: string, description: string, prompt: string) => void;
+	onSubmit: (
+		profile: string,
+		description: string,
+		prompt: string,
+		fileName: string
+	) => void;
 
 	constructor(
 		app: App,
 		plugin: LynxPlugin,
-		onSubmit: (profile: string, description: string, prompt: string) => void
+		onSubmit: (
+			profile: string,
+			description: string,
+			prompt: string,
+			fileName: string
+		) => void
 	) {
 		super(app);
 		this.plugin = plugin;
@@ -273,7 +289,7 @@ class ProfileCreationModal extends Modal {
 		});
 
 		selectedFile.addEventListener("change", (event: Event) => {
-			const target = event.target as HTMLInputElement;
+			const target = event.target as HTMLSelectElement;
 			this.fileName = target.value;
 		});
 
@@ -282,6 +298,12 @@ class ProfileCreationModal extends Modal {
 		});
 
 		createProfileButton.addEventListener("click", () => {
+			console.log(
+				this.profileName,
+				this.profileDescription,
+				this.profilePrompt,
+				this.fileName
+			);
 			if (
 				!this.profileName ||
 				!this.profileDescription ||
@@ -296,7 +318,8 @@ class ProfileCreationModal extends Modal {
 			this.onSubmit(
 				this.profileName,
 				this.profileDescription,
-				this.profilePrompt
+				this.profilePrompt,
+				this.fileName
 			);
 		});
 	}
