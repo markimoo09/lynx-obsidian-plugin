@@ -9,8 +9,6 @@ import {
 	Setting,
 } from "obsidian";
 
-// Remember to rename these classes and interfaces!
-
 interface LynxPluginSettings {
 	mySetting: string;
 }
@@ -29,17 +27,15 @@ export default class LynxPlugin extends Plugin {
 			new Notice("Hello, world!");
 		});
 
-		// This creates an icon in the left ribbon.
-		// const ribbonIconEl = this.addRibbonIcon('dice', 'Sample Plugin', (evt: MouseEvent) => {
-		// 	// Called when the user clicks the icon.
-		// 	new Notice('This is a notice!');
-		// });
-		// // Perform additional things with the ribbon
-		// ribbonIconEl.addClass('my-plugin-ribbon-class');
-
-		// This adds a status bar item to the bottom of the app. Does not work on mobile apps.
-		const statusBarItemEl = this.addStatusBarItem();
-		statusBarItemEl.setText("Status Bar Text");
+		this.addCommand({
+			id: "create-ai-profile",
+			name: "Create AI Profile",
+			callback: () => {
+				new ProfileCreationModal(this.app, (profile, description) => {
+					console.log(profile, description);
+				}).open();
+			},
+		});
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
@@ -58,6 +54,7 @@ export default class LynxPlugin extends Plugin {
 				editor.replaceSelection("Sample Editor Command");
 			},
 		});
+
 		// This adds a complex command that can check whether the current state of the app allows execution of the command
 		this.addCommand({
 			id: "open-sample-modal-complex",
@@ -122,6 +119,57 @@ class SampleModal extends Modal {
 	onClose() {
 		const { contentEl } = this;
 		contentEl.empty();
+	}
+}
+
+class ProfileCreationModal extends Modal {
+	onSubmit: (profile: string, description: string) => void;
+
+	constructor(
+		app: App,
+		onSubmit: (profile: string, description: string) => void
+	) {
+		super(app);
+		this.onSubmit = onSubmit;
+		this.setTitle("Create a new AI Profile");
+	}
+
+	profileName: string;
+	profileDescription: string;
+
+	onOpen() {
+		const { contentEl } = this;
+		contentEl.createEl("p", {
+			text: "Profiles should be distinct for each note file and will help the AI understand the context of the note.",
+		});
+
+		const profileCreationDiv = contentEl.createEl("div");
+		const profileNameField = profileCreationDiv.createEl("input", {
+			placeholder: "Profile Name",
+		});
+
+		profileNameField.addEventListener("input", (event: Event) => {
+			const target = event.target as HTMLInputElement;
+			this.profileName = target.value;
+		});
+
+		const profileDescription = profileCreationDiv.createEl("textarea", {
+			placeholder: "Profile Description",
+		});
+
+		profileDescription.addEventListener("input", (event: Event) => {
+			const target = event.target as HTMLTextAreaElement;
+			this.profileDescription = target.value;
+		});
+
+		const createProfileButton = profileCreationDiv.createEl("button", {
+			text: "Create Profile",
+		});
+
+		createProfileButton.addEventListener("click", () => {
+			this.close();
+			this.onSubmit(this.profileName, this.profileDescription);
+		});
 	}
 }
 
