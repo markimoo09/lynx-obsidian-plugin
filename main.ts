@@ -42,7 +42,7 @@ export default class LynxPlugin extends Plugin {
 				new ProfileCreationModal(
 					this.app,
 					(profile, description, prompt) => {
-						console.log(profile, description, prompt);
+						this.createProfile(profile, description, prompt);
 					}
 				).open();
 			},
@@ -117,6 +117,24 @@ export default class LynxPlugin extends Plugin {
 
 	async saveSettings() {
 		await this.saveData(this.settings);
+	}
+
+	async createProfile(
+		profileName: string,
+		profileDescription: string,
+		profilePrompt: string
+	) {
+		const profile: LynxProfile = {
+			name: profileName,
+			description: profileDescription,
+			prompt: profilePrompt,
+			fileName: this.app.workspace.getActiveFile()?.path || "",
+		};
+
+		this.profiles.push(profile);
+		await this.saveData(profile);
+
+		console.log("profile created", profile);
 	}
 }
 
