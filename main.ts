@@ -13,12 +13,20 @@ interface LynxPluginSettings {
 	mySetting: string;
 }
 
+interface LynxProfile {
+	name: string;
+	description: string;
+	prompt: string;
+	fileName: string;
+}
+
 const DEFAULT_SETTINGS: LynxPluginSettings = {
 	mySetting: "default",
 };
 
 export default class LynxPlugin extends Plugin {
 	settings: LynxPluginSettings;
+	profiles: LynxProfile[] = [];
 
 	async onload() {
 		await this.loadSettings();
@@ -39,6 +47,9 @@ export default class LynxPlugin extends Plugin {
 				).open();
 			},
 		});
+
+		this.profiles = (await this.loadData()) || [];
+		console.log("profiles", this.profiles);
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
