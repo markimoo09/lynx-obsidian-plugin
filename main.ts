@@ -10,7 +10,17 @@ import {
 	TFile,
 } from "obsidian";
 
-import { analyzeNote } from "./analyzer";
+import { z } from "zod";
+import { createModel, GENERAL_SYSTEM_PROMPT } from "./analyzer";
+
+const AnalyzerSchema = z.object({
+	profile: z.object({
+		name: z.string(),
+		description: z.string(),
+	}),
+	prompt: z.string(),
+	note: z.string(),
+});
 
 interface LynxPluginSettings {
 	mySetting: string;
@@ -77,21 +87,36 @@ export default class LynxPlugin extends Plugin {
 
 				const prompt = profile.prompt;
 
-				const result = await analyzeNote(
-					{
-						profile: {
-							name: profile.name,
-							description: profile.description,
-						},
-						prompt: profile.prompt,
-						note: selectedText,
-					},
-					this.settings.geminiApiKey
-				);
+				const gemini = await createModel(this.settings.geminiApiKey);
+				if (!gemini) throw new Error("Failed to create model");
 
-				if (result) {
-					console.log("result", result);
+				const fullPrompt = `${GENERAL_SYSTEM_PROMPT}
+					Profile Name: ${profile.name}
+					Profile Description: ${profile.description}
+					Task Prompt: ${prompt}
+			
+					Note Content:
+					${selectedText}`;
+
+				try {
+					const response = await gemini.models.generateContentStream({
+						model: "gemini-2.5-flash-lite",
+						contents: fullPrompt,
+					});
+
+					for await (const chunk of response) {
+						const chunkText = chunk.text || "";
+						editor.replaceRange(chunkText, editor.getCursor());
+						editor.setCursor(editor.lastLine());
+					}
+				} catch (error) {
+					console.error("AI generation failed:", error);
+					new Notice(
+						"Failed to generate content. Check your API key and try again."
+					);
 				}
+
+				new Notice("Lynx has successfully enhanced your note!");
 			},
 		});
 
