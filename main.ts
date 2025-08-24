@@ -7,10 +7,12 @@ import {
 	Plugin,
 	PluginSettingTab,
 	Setting,
+	TFile,
 } from "obsidian";
 
 interface LynxPluginSettings {
 	mySetting: string;
+	profiles: LynxProfile[];
 }
 
 interface LynxProfile {
@@ -22,6 +24,7 @@ interface LynxProfile {
 
 const DEFAULT_SETTINGS: LynxPluginSettings = {
 	mySetting: "default",
+	profiles: [],
 };
 
 export default class LynxPlugin extends Plugin {
@@ -30,6 +33,10 @@ export default class LynxPlugin extends Plugin {
 
 	async onload() {
 		await this.loadSettings();
+
+		// Load profiles from settings
+		this.profiles = this.settings.profiles;
+		console.log("profiles", this.profiles);
 
 		this.addRibbonIcon("dice", "Greet", () => {
 			new Notice("Hello, world!");
@@ -41,15 +48,13 @@ export default class LynxPlugin extends Plugin {
 			callback: () => {
 				new ProfileCreationModal(
 					this.app,
+					this,
 					(profile, description, prompt) => {
 						this.createProfile(profile, description, prompt);
 					}
 				).open();
 			},
 		});
-
-		this.profiles = (await this.loadData()) || [];
-		console.log("profiles", this.profiles);
 
 		// This adds a simple command that can be triggered anywhere
 		this.addCommand({
@@ -132,7 +137,8 @@ export default class LynxPlugin extends Plugin {
 		};
 
 		this.profiles.push(profile);
-		await this.saveData(profile);
+		this.settings.profiles = this.profiles;
+		await this.saveSettings();
 
 		console.log("profile created", profile);
 	}
@@ -155,13 +161,16 @@ class SampleModal extends Modal {
 }
 
 class ProfileCreationModal extends Modal {
+	plugin: LynxPlugin;
 	onSubmit: (profile: string, description: string, prompt: string) => void;
 
 	constructor(
 		app: App,
+		plugin: LynxPlugin,
 		onSubmit: (profile: string, description: string, prompt: string) => void
 	) {
 		super(app);
+		this.plugin = plugin;
 		this.onSubmit = onSubmit;
 		this.setTitle("Create a new AI Profile");
 	}
@@ -169,8 +178,20 @@ class ProfileCreationModal extends Modal {
 	profileName: string;
 	profileDescription: string;
 	profilePrompt: string;
+	fileName: string;
+
+	profiles: LynxProfile[] = [];
+	filteredFiles: TFile[] = [];
 
 	onOpen() {
+		this.profiles = this.plugin.profiles || [];
+		console.log("profiles", this.profiles);
+		this.filteredFiles = this.app.vault.getFiles().filter((file) => {
+			return !this.profiles.some(
+				(profile) => profile.fileName === file.path
+			);
+		});
+
 		const { contentEl } = this;
 		contentEl.createEl("p", {
 			text: "Profiles should be distinct for each note file and will help the AI understand the context of the note.",
@@ -204,6 +225,22 @@ class ProfileCreationModal extends Modal {
 		profilePrompt.addEventListener("input", (event: Event) => {
 			const target = event.target as HTMLTextAreaElement;
 			this.profilePrompt = target.value;
+		});
+
+		const selectedFile = profileCreationDiv.createEl("select");
+		selectedFile.required = true;
+
+		this.filteredFiles.forEach((file) => {
+			const option = selectedFile.createEl("option", {
+				text: file.basename,
+				value: file.path,
+			});
+			option.value = file.path;
+		});
+
+		selectedFile.addEventListener("change", (event: Event) => {
+			const target = event.target as HTMLInputElement;
+			this.fileName = target.value;
 		});
 
 		const createProfileButton = profileCreationDiv.createEl("button", {
