@@ -31,9 +31,12 @@ export default class LynxPlugin extends Plugin {
 			id: "create-ai-profile",
 			name: "Create AI Profile",
 			callback: () => {
-				new ProfileCreationModal(this.app, (profile, description) => {
-					console.log(profile, description);
-				}).open();
+				new ProfileCreationModal(
+					this.app,
+					(profile, description, prompt) => {
+						console.log(profile, description, prompt);
+					}
+				).open();
 			},
 		});
 
@@ -123,11 +126,11 @@ class SampleModal extends Modal {
 }
 
 class ProfileCreationModal extends Modal {
-	onSubmit: (profile: string, description: string) => void;
+	onSubmit: (profile: string, description: string, prompt: string) => void;
 
 	constructor(
 		app: App,
-		onSubmit: (profile: string, description: string) => void
+		onSubmit: (profile: string, description: string, prompt: string) => void
 	) {
 		super(app);
 		this.onSubmit = onSubmit;
@@ -136,6 +139,7 @@ class ProfileCreationModal extends Modal {
 
 	profileName: string;
 	profileDescription: string;
+	profilePrompt: string;
 
 	onOpen() {
 		const { contentEl } = this;
@@ -147,7 +151,7 @@ class ProfileCreationModal extends Modal {
 			cls: "profile-creation-container",
 		});
 		const profileNameField = profileCreationDiv.createEl("input", {
-			placeholder: "Profile Name",
+			placeholder: "Enter a name for the profile",
 		});
 
 		profileNameField.addEventListener("input", (event: Event) => {
@@ -155,13 +159,22 @@ class ProfileCreationModal extends Modal {
 			this.profileName = target.value;
 		});
 
-		const profileDescription = profileCreationDiv.createEl("textarea", {
-			placeholder: "Profile Description",
-		});
+		const profileDescription = profileCreationDiv.createEl("textarea");
+		profileDescription.placeholder = "Enter a description of the profile";
 
 		profileDescription.addEventListener("input", (event: Event) => {
 			const target = event.target as HTMLTextAreaElement;
 			this.profileDescription = target.value;
+		});
+
+		const profilePrompt = profileCreationDiv.createEl("textarea");
+		profilePrompt.placeholder =
+			"Specify how you want the AI to summarize, enhance, or process the notes";
+		profilePrompt.required = true;
+
+		profilePrompt.addEventListener("input", (event: Event) => {
+			const target = event.target as HTMLTextAreaElement;
+			this.profilePrompt = target.value;
 		});
 
 		const createProfileButton = profileCreationDiv.createEl("button", {
@@ -170,7 +183,11 @@ class ProfileCreationModal extends Modal {
 
 		createProfileButton.addEventListener("click", () => {
 			this.close();
-			this.onSubmit(this.profileName, this.profileDescription);
+			this.onSubmit(
+				this.profileName,
+				this.profileDescription,
+				this.profilePrompt
+			);
 		});
 	}
 }
