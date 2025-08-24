@@ -170,7 +170,7 @@ class ProfileCreationModal extends Modal {
 
 		const { contentEl } = this;
 		contentEl.createEl("p", {
-			text: "Profiles should be distinct for each note file, thus you cannot select the same file twice in the options. The profile will be used to summarize, enhance, or process the notes.",
+			text: "Profiles should be distinct for each note file, thus you cannot select the same file twice in the options.",
 		});
 
 		const profileCreationDiv = contentEl.createEl("div", {
@@ -203,7 +203,13 @@ class ProfileCreationModal extends Modal {
 			this.profilePrompt = target.value;
 		});
 
+		const selectLabel = profileCreationDiv.createEl("label", {
+			text: "Select a file:",
+		});
+
 		const selectedFile = profileCreationDiv.createEl("select");
+		selectLabel.setAttribute("for", "file-select");
+		selectedFile.setAttribute("id", "file-select");
 		selectedFile.required = true;
 
 		this.filteredFiles.forEach((file) => {
