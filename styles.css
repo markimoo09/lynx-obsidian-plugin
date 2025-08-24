@@ -1,8 +1,68 @@
 /*
-
-This CSS file will be included with your plugin, and
-available in the app when your plugin is enabled.
-
-If your plugin does not need CSS, delete this file.
-
+Lynx Obsidian Plugin Styles
 */
+
+/* ProfileCreationModal Styles */
+.profile-creation-container {
+	display: flex;
+	flex-direction: column;
+	gap: 16px;
+	margin-top: 16px;
+}
+
+.profile-creation-container input {
+	padding: 8px 12px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background-color: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 14px;
+	transition: border-color 0.2s ease;
+}
+
+.profile-creation-container input:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+	box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+}
+
+.profile-creation-container textarea {
+	padding: 8px 12px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background-color: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 14px;
+	min-height: 80px;
+	resize: vertical;
+	font-family: inherit;
+	transition: border-color 0.2s ease;
+}
+
+.profile-creation-container textarea:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+	box-shadow: 0 0 0 2px var(--interactive-accent-hover);
+}
+
+.profile-creation-container button {
+	padding: 10px 16px;
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	transition: background-color 0.2s ease;
+	margin-top: 8px;
+}
+
+.profile-creation-container button:hover {
+	background-color: var(--interactive-accent-hover);
+}
+
+.profile-creation-container button:active {
+	background-color: var(--interactive-accent);
+	transform: translateY(1px);
+}

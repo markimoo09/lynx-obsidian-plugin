@@ -143,7 +143,9 @@ class ProfileCreationModal extends Modal {
 			text: "Profiles should be distinct for each note file and will help the AI understand the context of the note.",
 		});
 
-		const profileCreationDiv = contentEl.createEl("div");
+		const profileCreationDiv = contentEl.createEl("div", {
+			cls: "profile-creation-container",
+		});
 		const profileNameField = profileCreationDiv.createEl("input", {
 			placeholder: "Profile Name",
 		});
