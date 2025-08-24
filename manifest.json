@@ -1,11 +1,11 @@
 {
-	"id": "sample-plugin",
-	"name": "Sample Plugin",
+	"id": "lynx-plugin",
+	"name": "Lynx",
 	"version": "1.0.0",
 	"minAppVersion": "0.15.0",
-	"description": "Demonstrates some of the capabilities of the Obsidian API.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
+	"description": "Lynx is a plugin that allows you to enhance your notes with AI.",
+	"author": "Lynx",
+	"authorUrl": "https://lynx.ai",
+	"fundingUrl": "https://lynx.ai/pricing",
 	"isDesktopOnly": false
 }
