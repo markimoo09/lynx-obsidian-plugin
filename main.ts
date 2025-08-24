@@ -88,6 +88,10 @@ export default class LynxPlugin extends Plugin {
 					},
 					this.settings.geminiApiKey
 				);
+
+				if (result) {
+					console.log("result", result);
+				}
 			},
 		});
 

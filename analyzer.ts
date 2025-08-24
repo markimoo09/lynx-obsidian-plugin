@@ -12,16 +12,19 @@ const AnalyzerSchema = z.object({
 });
 
 const GENERAL_SYSTEM_PROMPT = `
-You are a helpful notes assistant that will enhance, summarize, or process notes to make it more meanginful, organized, and useful.
+You are Lynx, a helpful notes assistant that will enhance, summarize, or process notes to make it more meanginful, organized, and useful.
 
 You will be given a 'profile' for the note that you will be analyzing and enhancing. This profile will contain a description of the note and give you context.
-In the profile, you will also be given a prompt that will guide you on what to do and how to do it.
+You will also be given a prompt that will guide you on what to do and how to do it.
+Then you will also receive the note content itself which is in markdown format.
 
 Note Enhancement Process:
 - Analyze and Understand the Context of the Note Profile (description and name)
 - Understand the Prompt Guidelines
 - Analyze the note content itself
 - Perform the task specified in the prompt
+
+Lastly, you are required to return the enhanced note in markdown format.
 
 `;
 
@@ -50,8 +53,27 @@ export async function analyzeNote(
 
 	const { profile, prompt, note } = data;
 
-	const response = await gemini.models.generateContent({
-		model: "gemini-2.5-flash-lite",
-		contents: "",
-	});
+	const fullPrompt = `${GENERAL_SYSTEM_PROMPT}
+    Profile Name: ${profile.name}
+    Profile Description: ${profile.description}
+    Task Prompt: ${prompt}
+
+    Note Content:
+    ${note}`;
+
+	try {
+		const response = await gemini.models.generateContent({
+			model: "gemini-2.5-flash-lite",
+			contents: fullPrompt,
+		});
+
+		new Notice("Lynx has successfully enhanced your note!");
+		return response.text;
+	} catch (error) {
+		console.error("AI generation failed:", error);
+		new Notice(
+			"Failed to generate content. Check your API key and try again."
+		);
+		return null;
+	}
 }
