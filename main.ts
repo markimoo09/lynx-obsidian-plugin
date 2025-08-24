@@ -280,16 +280,26 @@ class ProfileCreationModal extends Modal {
 		selectedFile.setAttribute("id", "file-select");
 		selectedFile.required = true;
 
+		// Add a default placeholder option
+		const defaultOption = selectedFile.createEl("option", {
+			text: "-- Select a file --",
+			value: "",
+		});
+		defaultOption.selected = true;
+		defaultOption.disabled = true;
+
 		this.filteredFiles.forEach((file) => {
 			const option = selectedFile.createEl("option", {
 				text: file.basename,
 				value: file.path,
 			});
-			option.value = file.path;
 		});
+
+		console.log("filteredFiles", this.filteredFiles);
 
 		selectedFile.addEventListener("change", (event: Event) => {
 			const target = event.target as HTMLSelectElement;
+			console.log("target", target);
 			this.fileName = target.value;
 		});
 
