@@ -131,6 +131,8 @@ export default class LynxPlugin extends Plugin {
 								ch: insertPosition.ch + chunkText.length,
 							};
 						}
+
+						await new Promise((resolve) => setTimeout(resolve, 50));
 					}
 				} catch (error) {
 					console.error("AI generation failed:", error);
