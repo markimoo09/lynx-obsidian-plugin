@@ -15,9 +15,27 @@ export class ChatPannelView extends ItemView {
 		return "Chat Pannel";
 	}
 
+	message: string;
+
 	async onOpen() {
 		const container = this.contentEl;
-		container.createEl("h1", { text: "Chat Pannel" });
+		const mainDiv = container.createEl("div");
+
+		const convoWindow = mainDiv.createEl("div");
+
+		const chatInputWindow = mainDiv.createEl("div");
+		const chatInput = chatInputWindow.createEl("input", {
+			placeholder: "Enter a message",
+		});
+
+		chatInput.addEventListener("input", (event: Event) => {
+			const target = event.target as HTMLInputElement;
+			this.message = target.value;
+		});
+
+		const sendButton = chatInputWindow.createEl("button", {
+			text: "Send",
+		});
 	}
 
 	async onClose() {}
