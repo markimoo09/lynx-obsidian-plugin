@@ -8,8 +8,10 @@ import {
 	PluginSettingTab,
 	Setting,
 	TFile,
+	WorkspaceLeaf,
 } from "obsidian";
 
+import { ChatPannelView, CHAT_PANNEL_VIEW_TYPE } from "./chatPannel";
 import { z } from "zod";
 import { createModel, GENERAL_SYSTEM_PROMPT } from "./analyzer";
 
@@ -52,8 +54,13 @@ export default class LynxPlugin extends Plugin {
 		this.profiles = this.settings.profiles;
 		console.log("profiles", this.profiles);
 
+		this.registerView(
+			CHAT_PANNEL_VIEW_TYPE,
+			(leaf) => new ChatPannelView(leaf)
+		);
+
 		this.addRibbonIcon("dice", "Greet", () => {
-			new Notice("Hello, world!");
+			this.activateChatPannel();
 		});
 
 		this.addCommand({
@@ -160,6 +167,27 @@ export default class LynxPlugin extends Plugin {
 	}
 
 	onunload() {}
+
+	async activateChatPannel() {
+		const { workspace } = this.app;
+
+		let leaf: WorkspaceLeaf | null = null;
+		const leaves = workspace.getLeavesOfType(CHAT_PANNEL_VIEW_TYPE);
+
+		if (leaves.length > 0) {
+			leaf = leaves[0];
+		} else {
+			leaf = workspace.getRightLeaf(false);
+			await leaf?.setViewState({
+				type: CHAT_PANNEL_VIEW_TYPE,
+				active: true,
+			});
+		}
+
+		if (!leaf) {
+			workspace.revealLeaf(leaf!);
+		}
+	}
 
 	async loadSettings() {
 		this.settings = Object.assign(
