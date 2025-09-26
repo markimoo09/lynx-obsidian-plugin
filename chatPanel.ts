@@ -19,14 +19,18 @@ export class ChatPannelView extends ItemView {
 
 	async onOpen() {
 		const container = this.contentEl;
-		const mainDiv = container.createEl("div");
+		const mainDiv = container.createEl("div", {
+			cls: "chat-panel-container",
+		});
 
 		const convoWindow = mainDiv.createEl("div");
 
-		const chatInputWindow = mainDiv.createEl("div");
-		const chatInput = chatInputWindow.createEl("input", {
-			placeholder: "Enter a message",
+		const chatInputWindow = mainDiv.createEl("div", {
+			cls: "chat-input-container",
 		});
+
+		const chatInput = chatInputWindow.createEl("textarea");
+		chatInput.placeholder = "Enter a message";
 
 		chatInput.addEventListener("input", (event: Event) => {
 			const target = event.target as HTMLInputElement;

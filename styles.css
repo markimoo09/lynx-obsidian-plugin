@@ -66,3 +66,63 @@ Lynx Obsidian Plugin Styles
 	background-color: var(--interactive-accent);
 	transform: translateY(1px);
 }
+
+.chat-panel-container {
+	display: grid;
+	overflow: hidden;
+	justify-content: center;
+	height: 100%;
+	width: 100% !important;
+}
+
+.chat-panel-container textarea {
+	padding: 8px 12px;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background-color: var(--background-primary);
+	color: var(--text-normal);
+	font-size: 12px;
+	resize: vertical;
+	font-family: inherit;
+	width: 100%;
+	height: 100%;
+	transition: border-color 0.2s ease;
+}
+
+.chat-panel-container textarea:focus {
+	outline: none;
+	border-color: var(--interactive-accent);
+	box-shadow: 0 0 0 1px var(--interactive-accent-hover);
+}
+
+.chat-panel-container button {
+	padding: 10px 16px;
+	background-color: var(--interactive-accent);
+	color: var(--text-on-accent);
+	border: none;
+	border-radius: 4px;
+	font-size: 14px;
+	font-weight: 500;
+	cursor: pointer;
+	height: 100%;
+	transition: background-color 0.2s ease;
+}
+
+.chat-panel-container button:hover {
+	background-color: var(--interactive-accent-hover);
+}
+
+.chat-panel-container button:active {
+	background-color: var(--interactive-accent);
+	transform: translateY(1px);
+}
+
+.chat-input-container {
+	display: flex;
+	flex-direction: row;
+	align-self: end;
+	gap: 4px;
+	width: 100%;
+	height: 15%;
+	margin-bottom: 8px;
+}

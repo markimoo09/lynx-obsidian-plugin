@@ -11,7 +11,7 @@ import {
 	WorkspaceLeaf,
 } from "obsidian";
 
-import { ChatPannelView, CHAT_PANNEL_VIEW_TYPE } from "./chatPannel";
+import { ChatPannelView, CHAT_PANNEL_VIEW_TYPE } from "./chatPanel";
 import { z } from "zod";
 import { createModel, GENERAL_SYSTEM_PROMPT } from "./analyzer";
 
