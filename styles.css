@@ -68,9 +68,9 @@ Lynx Obsidian Plugin Styles
 }
 
 .chat-panel-container {
-	display: grid;
+	display: flex;
+	flex-direction: column;
 	overflow: hidden;
-	justify-content: center;
 	height: 100%;
 	width: 100% !important;
 }
@@ -120,9 +120,9 @@ Lynx Obsidian Plugin Styles
 .chat-input-container {
 	display: flex;
 	flex-direction: row;
-	align-self: end;
 	gap: 4px;
 	width: 100%;
 	height: 15%;
 	margin-bottom: 8px;
+	margin-top: auto;
 }
