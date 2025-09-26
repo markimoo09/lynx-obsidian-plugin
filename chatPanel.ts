@@ -32,13 +32,27 @@ export class ChatPannelView extends ItemView {
 		const chatInput = chatInputWindow.createEl("textarea");
 		chatInput.placeholder = "Enter a message";
 
+		// Auto-resize textarea
+		const autoResize = () => {
+			chatInput.style.height = "auto";
+			chatInput.style.height = chatInput.scrollHeight + "px";
+		};
+
 		chatInput.addEventListener("input", (event: Event) => {
 			const target = event.target as HTMLInputElement;
 			this.message = target.value;
+			autoResize();
 		});
 
-		const sendButton = chatInputWindow.createEl("button", {
-			text: "Send",
+		// Initial resize
+		autoResize();
+
+		const chatInputButtonRow = chatInputWindow.createEl("div", {
+			cls: "chat-input-button-row",
+		});
+
+		const sendButton = chatInputButtonRow.createEl("button", {
+			text: "↑",
 		});
 	}
 

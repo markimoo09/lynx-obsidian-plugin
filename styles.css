@@ -77,34 +77,38 @@ Lynx Obsidian Plugin Styles
 
 .chat-panel-container textarea {
 	padding: 8px 12px;
-	border: 1px solid var(--background-modifier-border);
-	border-radius: 4px;
 	background-color: var(--background-primary);
-	color: var(--text-normal);
 	font-size: 12px;
-	resize: vertical;
+	resize: none;
 	font-family: inherit;
 	width: 100%;
-	height: 100%;
+	border: none;
 	transition: border-color 0.2s ease;
+	min-height: 20px;
+	max-height: 200px;
+	overflow-y: hidden;
 }
 
 .chat-panel-container textarea:focus {
-	outline: none;
-	border-color: var(--interactive-accent);
-	box-shadow: 0 0 0 1px var(--interactive-accent-hover);
+	outline: none !important;
+	border: none !important;
+	box-shadow: none !important;
 }
 
 .chat-panel-container button {
-	padding: 10px 16px;
+	padding: 0;
 	background-color: var(--interactive-accent);
 	color: var(--text-on-accent);
 	border: none;
-	border-radius: 4px;
+	border-radius: 50%;
 	font-size: 14px;
 	font-weight: 500;
 	cursor: pointer;
-	height: 100%;
+	width: 20px;
+	height: 20px;
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	transition: background-color 0.2s ease;
 }
 
@@ -119,10 +123,22 @@ Lynx Obsidian Plugin Styles
 
 .chat-input-container {
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
+	align-items: flex-end;
 	gap: 4px;
 	width: 100%;
-	height: 15%;
 	margin-bottom: 8px;
 	margin-top: auto;
+	border: 1px solid var(--background-modifier-border);
+	border-radius: 4px;
+	background-color: var(--background-primary);
+	color: var(--text-normal);
+}
+
+.chat-input-button-row {
+	display: flex;
+	flex-direction: row;
+	padding: 8px;
+	width: 100%;
+	justify-content: end;
 }
